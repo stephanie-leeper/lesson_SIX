@@ -68,12 +68,12 @@ watch(isDark, (dark) => {
             <v-icon>{{ isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night' }}</v-icon>
           </v-btn>
 
-          <diProfilePic
+          <div class="d-flex flex-column align-center text-center">
+            <ProfilePic
               class="mb-4"
               border-color="primary"
               :border-width="4"
-            /
-            </v-avatar>
+            />
 
             <h1 class="text-h5 font-weight-bold">Stephanie Leeper</h1>
             <p class="text-body-2 text-medium-emphasis mt-1 mb-0">
