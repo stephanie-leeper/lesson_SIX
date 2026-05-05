@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useTheme } from 'vuetify'
 import LinkButton from '@/components/LinkButton.vue'
+import ProfilePic from '@/components/ProfilePic.vue'
 
 type LinkItem = {
   label: string
@@ -67,14 +68,16 @@ watch(isDark, (dark) => {
             <v-icon>{{ isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night' }}</v-icon>
           </v-btn>
 
-          <div class="d-flex flex-column align-center text-center">
-            <v-avatar size="110" color="primary" class="mb-4 text-h4 font-weight-bold">
-              SL
+          <diProfilePic
+              class="mb-4"
+              border-color="primary"
+              :border-width="4"
+            /
             </v-avatar>
 
             <h1 class="text-h5 font-weight-bold">Stephanie Leeper</h1>
             <p class="text-body-2 text-medium-emphasis mt-1 mb-0">
-              Designer, builder, lifelong learner.
+              Designer, builder, pastry maker.
             </p>
           </div>
 
