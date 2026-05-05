@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useTheme } from 'vuetify'
+import LinkButton from '@/components/LinkButton.vue'
 
 type LinkItem = {
   label: string
@@ -11,25 +13,24 @@ const links: LinkItem[] = [
   {
     label: 'LinkedIn',
     href: 'https://www.linkedin.com/in/stephanieleeper',
-    icon: 'in',
+    icon: 'mdi-linkedin',
   },
   {
     label: 'Instagram',
     href: 'https://www.instagram.com/stephanieleeper',
-    icon: 'ig',
+    icon: 'mdi-instagram',
   },
   {
     label: 'Email',
     href: 'mailto:stephanie.leeper@slalom.com',
-    icon: '@',
+    icon: 'mdi-email-outline',
   },
 ]
 
+const theme = useTheme()
 const isDark = ref(false)
 
-function applyTheme(dark: boolean) {
-  document.documentElement.classList.toggle('dark', dark)
-}
+const currentTheme = computed(() => (isDark.value ? 'dark' : 'light'))
 
 function toggleTheme() {
   isDark.value = !isDark.value
@@ -40,174 +41,55 @@ onMounted(() => {
   if (stored) {
     isDark.value = stored === 'dark'
   }
-  applyTheme(isDark.value)
+  theme.change(currentTheme.value)
 })
 
 watch(isDark, (dark) => {
-  applyTheme(dark)
+  theme.change(dark ? 'dark' : 'light')
   localStorage.setItem('theme', dark ? 'dark' : 'light')
 })
 </script>
 
 <template>
-  <main class="card">
-    <button
-      class="theme-toggle"
-      type="button"
-      :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-      @click="toggleTheme"
-    >
-      {{ isDark ? '☀' : '☾' }}
-    </button>
+  <v-container class="fill-height" fluid>
+    <v-row justify="center" align="center" no-gutters class="w-100">
+      <v-col cols="12" sm="8" md="6" lg="4">
+        <v-card class="pa-6 position-relative" rounded="xl" elevation="4">
+          <v-btn
+            class="position-absolute"
+            style="top: 12px; right: 12px"
+            icon
+            variant="text"
+            density="comfortable"
+            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleTheme"
+          >
+            <v-icon>{{ isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night' }}</v-icon>
+          </v-btn>
 
-    <div class="avatar" aria-hidden="true">SL</div>
+          <div class="d-flex flex-column align-center text-center">
+            <v-avatar size="110" color="primary" class="mb-4 text-h4 font-weight-bold">
+              SL
+            </v-avatar>
 
-    <h1 class="name">Stephanie Leeper</h1>
-    <p class="tagline">Designer, builder, lifelong learner.</p>
+            <h1 class="text-h5 font-weight-bold">Stephanie Leeper</h1>
+            <p class="text-body-2 text-medium-emphasis mt-1 mb-0">
+              Designer, builder, lifelong learner.
+            </p>
+          </div>
 
-    <ul class="links">
-      <li v-for="link in links" :key="link.label">
-        <a class="link-btn" :href="link.href" target="_blank" rel="noopener noreferrer">
-          <span class="icon">{{ link.icon }}</span>
-          <span class="label">{{ link.label }}</span>
-        </a>
-      </li>
-    </ul>
-  </main>
+          <div class="d-flex flex-column ga-3 mt-6">
+            <LinkButton
+              v-for="link in links"
+              :key="link.label"
+              :label="link.label"
+              :url="link.href"
+              :icon="link.icon"
+            />
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<style scoped>
-.card {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 2.5rem 1.75rem 2rem;
-  box-shadow: var(--shadow);
-  text-align: center;
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.theme-toggle {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  font-size: 1rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
-}
-
-.theme-toggle:hover {
-  background: var(--bg);
-  transform: rotate(15deg);
-}
-
-.avatar {
-  width: 110px;
-  height: 110px;
-  margin: 0 auto 1.25rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), #94a3b8);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 2rem;
-  letter-spacing: 0.05em;
-  box-shadow: var(--shadow);
-}
-
-.name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-.tagline {
-  margin-top: 0.4rem;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.links {
-  list-style: none;
-  margin-top: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.link-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1rem;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease,
-    color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.link-btn:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
-  box-shadow: var(--shadow);
-}
-
-.link-btn:hover .icon {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-.icon {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 8px;
-  background: var(--bg);
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  text-transform: lowercase;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.label {
-  flex: 1;
-  text-align: left;
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: 2rem 1.25rem 1.5rem;
-    border-radius: 16px;
-  }
-
-  .avatar {
-    width: 96px;
-    height: 96px;
-    font-size: 1.75rem;
-  }
-}
-</style>
